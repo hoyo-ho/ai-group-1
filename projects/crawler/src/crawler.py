@@ -7,7 +7,7 @@ from typing import Dict, List, Optional
 from urllib.parse import urlparse
 import requests
 
-from .config import DEFAULT_TIMEOUT, MAX_RETRIES, USER_AGENT
+from .config import DEFAULT_TIMEOUT, MAX_RETRIES, DEFAULT_HEADERS
 from .extractors import get_extractor
 from .exporters import export_content
 
@@ -19,7 +19,7 @@ class Crawler:
         self.timeout = timeout
         self.max_retries = max_retries
         self.session = requests.Session()
-        self.session.headers.update({"User-Agent": USER_AGENT})
+        self.session.headers.update(DEFAULT_HEADERS)
     
     def crawl(self, url: str) -> Dict:
         """Crawl a URL and extract content"""
@@ -46,7 +46,7 @@ class Crawler:
             return content
         
         # Export to formats
-        results = export_content(content, formats, filename, output_dir)
+        results = export_content(content, formats, filename, output_dir, source_url=url)
         
         return {
             "url": url,

@@ -138,7 +138,7 @@ class PDFFxporter(BaseExporter):
 class ImageExporter(BaseExporter):
     """Export images (download and save)"""
     
-    def export(self, data: Dict, filename: str, output_dir: Path = None) -> str:
+    def export(self, data: Dict, filename: str, output_dir: Path = None, source_url: str = None) -> str:
         if output_dir is None:
             output_dir = OUTPUT_DIR
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -148,6 +148,13 @@ class ImageExporter(BaseExporter):
             return ""
         
         downloaded = []
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        }
+        # Add Referer to bypass hotlink protection
+        if source_url:
+            headers["Referer"] = source_url
+        
         for i, img in enumerate(images):
             img_url = img.get("url", "")
             if not img_url:
@@ -160,7 +167,7 @@ class ImageExporter(BaseExporter):
             
             try:
                 import requests
-                response = requests.get(img_url, timeout=30)
+                response = requests.get(img_url, timeout=30, headers=headers)
                 response.raise_for_status()
                 
                 with open(img_path, "wb") as f:
@@ -189,7 +196,7 @@ def get_exporter(format_type: str) -> BaseExporter:
     return exporters.get(format_type.lower())
 
 
-def export_content(data: Dict, formats: List[str], filename: str = None, output_dir: Path = None) -> Dict[str, str]:
+def export_content(data: Dict, formats: List[str], filename: str = None, output_dir: Path = None, source_url: str = None) -> Dict[str, str]:
     """Export content to multiple formats"""
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -201,7 +208,11 @@ def export_content(data: Dict, formats: List[str], filename: str = None, output_
         try:
             exporter = get_exporter(fmt)
             if exporter:
-                output_path = exporter.export(data, filename, output_dir)
+                # Pass source_url only for image exporters
+                if isinstance(exporter, ImageExporter):
+                    output_path = exporter.export(data, filename, output_dir, source_url)
+                else:
+                    output_path = exporter.export(data, filename, output_dir)
                 results[fmt] = output_path
         except Exception as e:
             results[fmt] = f"ERROR: {str(e)}"
