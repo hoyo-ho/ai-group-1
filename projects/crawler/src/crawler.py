@@ -164,6 +164,9 @@ class Crawler:
             "csdn.net",
             "juejin.cn",
             "segmentfault.com",
+            # Sites that block requests (need Playwright)
+            "wikipedia.org",
+            "wikidata.org",
         ]
         parsed = urlparse(url)
         return any(domain in parsed.netloc.lower() for domain in dynamic_domains)

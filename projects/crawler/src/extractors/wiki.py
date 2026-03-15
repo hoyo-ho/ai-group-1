@@ -103,21 +103,34 @@ class WikiExtractor(BaseExtractor):
         return ""
     
     def _extract_content(self, soup: BeautifulSoup) -> str:
+        # Try id first (newer Wikipedia)
+        content_div = soup.find(id="mw-content-text")
+        if content_div:
+            # Only remove script and style, keep rest
+            for elem in content_div(["script", "style"]):
+                elem.decompose()
+            text = content_div.get_text(separator="\n", strip=True)
+            # Clean up excessive newlines
+            import re
+            text = re.sub(r'\n\n+', '\n', text)
+            return text
+        
+        # Try class (older Wikipedia)
+        mw_content = soup.find("div", class_="mw-parser-output")
+        if mw_content:
+            for elem in mw_content(["script", "style"]):
+                elem.decompose()
+            text = mw_content.get_text(separator="\n", strip=True)
+            import re
+            text = re.sub(r'\n\n+', '\n', text)
+            return text
+        
         # Baidu Baike: .lemma-content
         content_div = soup.find("div", class_="lemma-content")
         if content_div:
-            # Remove unwanted elements
-            for elem in content_div(["script", "style", "aside", "导航", "相关链接"]):
+            for elem in content_div(["script", "style", "aside"]):
                 elem.decompose()
             return content_div.get_text(separator="\n", strip=True)
-        
-        # Wikipedia: .mw-parser-output
-        mw_content = soup.find("div", class_="mw-parser-output")
-        if mw_content:
-            # Remove references and other unwanted elements
-            for elem in mw_content(["table", "div", "references", "nav"]):
-                elem.decompose()
-            return mw_content.get_text(separator="\n", strip=True)
         
         return ""
     
