@@ -48,6 +48,13 @@ def main():
         action="store_true",
         help="Use Playwright for JavaScript-rendered pages"
     )
+    parser.add_argument(
+        "--site",
+        type=str,
+        choices=["wiki", "baike", "baidu", "bilibili", "douyin", "sohu", "quark", "general"],
+        default=None,
+        help="Specify site type for extraction (auto-detected if not provided)"
+    )
     
     args = parser.parse_args()
     
@@ -63,6 +70,10 @@ def main():
     print(f"Crawling: {args.url}")
     print(f"Export formats: {', '.join(args.formats)}")
     print(f"Output directory: {output_dir}")
+    if args.site:
+        print(f"Site type: {args.site} (forced)")
+    else:
+        print(f"Site type: auto-detect")
     print("-" * 50)
     
     # Run crawler
@@ -71,7 +82,8 @@ def main():
         formats=args.formats,
         filename=args.output,
         output_dir=output_dir,
-        use_playwright=args.playwright
+        use_playwright=args.playwright,
+        site_type=args.site
     )
     
     if "error" in result:

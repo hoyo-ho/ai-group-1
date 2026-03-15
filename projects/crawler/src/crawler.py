@@ -8,17 +8,18 @@ from urllib.parse import urlparse
 import requests
 
 from .config import DEFAULT_TIMEOUT, MAX_RETRIES, DEFAULT_HEADERS, PROXY_ENABLED, PROXY_HTTP, PROXY_SOCKS5
-from .extractors import get_extractor
+from .extractors import get_extractor, get_extractor_for_playwright
 from .exporters import export_content
 
 
 class Crawler:
     """Web Crawler with optional JavaScript rendering"""
     
-    def __init__(self, timeout: int = DEFAULT_TIMEOUT, max_retries: int = MAX_RETRIES, use_playwright: bool = False):
+    def __init__(self, timeout: int = DEFAULT_TIMEOUT, max_retries: int = MAX_RETRIES, use_playwright: bool = False, site_type: str = None):
         self.timeout = timeout
         self.max_retries = max_retries
         self.use_playwright = use_playwright
+        self.site_type = site_type
         self.session = requests.Session()
         self.session.headers.update(DEFAULT_HEADERS)
         
@@ -52,15 +53,20 @@ class Crawler:
         # Try requests first, then playwright if needed
         html = self._fetch(url)
         
+        # Check if we should use playwright based on extractor requirements
+        needs_playwright = self.use_playwright or self._should_use_playwright(url)
+        if self.site_type == "douyin":
+            needs_playwright = True
+        
         if not html or self._needs_javascript(url, html):
-            if self.use_playwright or self._should_use_playwright(url):
+            if needs_playwright:
                 html = self._fetch_with_playwright(url)
         
         if not html:
             return {"error": "Failed to fetch URL", "url": url}
         
-        # Get appropriate extractor
-        extractor = get_extractor(url)
+        # Get appropriate extractor (with optional site_type hint)
+        extractor = get_extractor(url, self.site_type)
         
         # Extract content
         content = extractor.extract(url, html)
@@ -112,18 +118,23 @@ class Crawler:
             print(f"Playwright failed to fetch {url}: {e}")
             return None
     
-    def crawl_and_export(self, url: str, formats: List[str], filename: str = None, output_dir = None, use_playwright: bool = False) -> Dict:
+    def crawl_and_export(self, url: str, formats: List[str], filename: str = None, output_dir = None, use_playwright: bool = False, site_type: str = None) -> Dict:
         """Crawl URL and export to specified formats"""
         # Temporarily enable playwright if requested
         original_playwright = self.use_playwright
+        original_site_type = self.site_type
+        
         if use_playwright:
             self.use_playwright = True
+        if site_type:
+            self.site_type = site_type
         
         # Crawl content
         content = self.crawl(url)
         
-        # Restore original setting
+        # Restore original settings
         self.use_playwright = original_playwright
+        self.site_type = original_site_type
         
         if "error" in content:
             return content
@@ -161,14 +172,14 @@ class Crawler:
             self.playwright_sync.stop()
 
 
-def crawl(url: str, formats: List[str] = None, filename: str = None, output_dir = None, use_playwright: bool = False) -> Dict:
+def crawl(url: str, formats: List[str] = None, filename: str = None, output_dir = None, use_playwright: bool = False, site_type: str = None) -> Dict:
     """Convenience function to crawl a URL"""
     if formats is None:
         formats = ["json"]
     
-    crawler = Crawler(use_playwright=use_playwright)
+    crawler = Crawler(use_playwright=use_playwright, site_type=site_type)
     try:
-        result = crawler.crawl_and_export(url, formats, filename, output_dir, use_playwright=use_playwright)
+        result = crawler.crawl_and_export(url, formats, filename, output_dir, use_playwright=use_playwright, site_type=site_type)
         return result
     finally:
         crawler.close()

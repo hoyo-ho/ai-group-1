@@ -7,11 +7,11 @@ from pathlib import Path
 
 # Project paths
 PROJECT_ROOT = Path(__file__).parent.parent
-OUTPUT_DIR = Path.home() / "Downloads" / "crawler-output"
+OUTPUT_DIR = Path.home() / "Downloads" / "crawler" / "output"
 DOWNLOADS_DIR = Path.home() / "Downloads"
 
 # Create output directory if not exists
-OUTPUT_DIR.mkdir(exist_ok=True)
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 DOWNLOADS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Crawler settings
