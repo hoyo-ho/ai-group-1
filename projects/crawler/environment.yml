@@ -1,0 +1,20 @@
+# Crawler Project Dependencies
+# Install with: conda env create -f environment.yml
+# Or: conda install --file requirements.txt
+
+name: crawler
+
+channels:
+  - defaults
+  - conda-forge
+
+dependencies:
+  - python>=3.9
+  - pip
+  - requests>=2.28.0
+  - beautifulsoup4>=4.11.0
+  - lxml>=4.9.0
+  - pip:
+    - requests>=2.28.0
+    - beautifulsoup4>=4.11.0
+    - lxml>=4.9.0
