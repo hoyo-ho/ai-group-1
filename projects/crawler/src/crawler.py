@@ -8,7 +8,7 @@ from typing import Dict, List, Optional
 from urllib.parse import urlparse
 import requests
 
-from .config import DEFAULT_TIMEOUT, MAX_RETRIES, DEFAULT_HEADERS, PROXY_ENABLED, PROXY_HTTP, PROXY_SOCKS5
+from .config import DEFAULT_TIMEOUT, MAX_RETRIES, DEFAULT_HEADERS, PROXY_ENABLED, PROXY_HTTP, PROXY_SOCKS5, ZHIHU_COOKIES, BAIDU_COOKIES
 from .extractors import get_extractor, get_extractor_for_playwright
 from .exporters import export_content
 
@@ -41,6 +41,19 @@ class Crawler:
         self.playwright_browser = None
         self.playwright_sync = None
         self.stealth_instance = None
+        
+        # Apply cookies for specific sites
+        self._apply_cookies()
+    
+    def _apply_cookies(self):
+        """Apply cookies for known sites"""
+        # Apply Zhihu cookies
+        for name, value in ZHIHU_COOKIES.items():
+            self.session.cookies.set(name, value, domain=".zhihu.com")
+        
+        # Apply Baidu cookies
+        for name, value in BAIDU_COOKIES.items():
+            self.session.cookies.set(name, value, domain=".baidu.com")
     
     def _use_proxy(self, url: str) -> bool:
         """Check if we should use proxy for this URL"""
