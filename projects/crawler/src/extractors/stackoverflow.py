@@ -25,8 +25,8 @@ class StackoverflowExtractor(BaseExtractor):
     def extract(self, url: str, html: str) -> Dict:
         soup = BeautifulSoup(html, 'html.parser')
         
-        # Check if it's a question page
-        if "/questions/" in url:
+        # Check if it's a question page (/questions/ or /q/)
+        if "/questions/" in url or "/q/" in url:
             return self._extract_question(url, soup, html)
         elif "/users/" in url:
             return self._extract_user(url, soup)
