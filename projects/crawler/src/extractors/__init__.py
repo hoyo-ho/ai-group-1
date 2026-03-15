@@ -16,6 +16,10 @@ from .baidu import BaiduExtractor
 from .wiki import WikiExtractor
 from .sohu import SohuExtractor
 from .quark import QuarkExtractor
+from .csdn import CsdnExtractor
+from .cnblogs import CnblogsExtractor
+from .juejin import JuejinExtractor
+from .segmentfault import SegmentfaultExtractor
 
 
 # Registry of all extractors with their priorities
@@ -28,6 +32,10 @@ EXTRACTOR_REGISTRY: List[Type[BaseExtractor]] = [
     BaiduExtractor,    # Priority 70 - Baidu search results
     QuarkExtractor,    # Priority 65 - Quark search/cloud
     SohuExtractor,     # Priority 60 - Sohu search/article
+    CsdnExtractor,     # Priority 70 - CSDN blog
+    CnblogsExtractor,  # Priority 70 - 博客园
+    JuejinExtractor,   # Priority 70 - 稀土掘金
+    SegmentfaultExtractor, # Priority 70 - SegmentFault
     
     # Low priority: general fallback
     GeneralExtractor,   # Priority 10 - general web pages
@@ -70,6 +78,10 @@ def _get_extractor_by_type(site_type: str) -> Optional[Type[BaseExtractor]]:
         "douyin": DouyinExtractor,
         "sohu": SohuExtractor,
         "quark": QuarkExtractor,
+        "csdn": CsdnExtractor,
+        "cnblogs": CnblogsExtractor,
+        "juejin": JuejinExtractor,
+        "segmentfault": SegmentfaultExtractor,
         "general": GeneralExtractor,
     }
     
@@ -119,6 +131,9 @@ def get_extractor_for_playwright(url: str) -> bool:
         "taobao.com",
         "jd.com",
         "tmall.com",
+        "csdn.net",
+        "juejin.cn",
+        "segmentfault.com",
     ]
     
     url_lower = url.lower()
@@ -135,6 +150,10 @@ __all__ = [
     "WikiExtractor",
     "SohuExtractor",
     "QuarkExtractor",
+    "CsdnExtractor",
+    "CnblogsExtractor",
+    "JuejinExtractor",
+    "SegmentfaultExtractor",
     "get_extractor",
     "get_extractor_for_playwright",
     "EXTRACTOR_REGISTRY",
