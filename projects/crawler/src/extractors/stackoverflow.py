@@ -26,10 +26,12 @@ class StackoverflowExtractor(BaseExtractor):
     MIN_CONTENT_LENGTH = 100
     
     def _clean_content(self, content: str) -> str:
-        """Clean content by removing excessive newlines"""
+        """Clean content by removing excessive newlines and carriage returns"""
         if not content:
             return ""
-        # Replace multiple consecutive newlines with single newline
+        # First: normalize line endings - convert \r\n and \r to \n
+        content = content.replace('\r\n', '\n').replace('\r', '\n')
+        # Second: replace multiple consecutive newlines with single newline
         content = re.sub(r'\n+', '\n', content)
         # Strip leading/trailing whitespace
         return content.strip()
