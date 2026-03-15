@@ -20,6 +20,10 @@ from .csdn import CsdnExtractor
 from .cnblogs import CnblogsExtractor
 from .juejin import JuejinExtractor
 from .segmentfault import SegmentfaultExtractor
+from .github import GithubExtractor
+from .gitee import GiteeExtractor
+from .zhihu import ZhihuExtractor
+from .stackoverflow import StackoverflowExtractor
 
 
 # Registry of all extractors with their priorities
@@ -29,6 +33,10 @@ EXTRACTOR_REGISTRY: List[Type[BaseExtractor]] = [
     WikiExtractor,      # Priority 90 - handles baike.baidu.com, wikipedia.org
     DouyinExtractor,   # Priority 85 - Douyin/TikTok China (must use Playwright)
     BilibiliExtractor, # Priority 80 - Bilibili video
+    GithubExtractor,   # Priority 80 - GitHub repository
+    GiteeExtractor,    # Priority 80 - Gitee repository
+    StackoverflowExtractor, # Priority 75 - Stack Overflow Q&A
+    ZhihuExtractor,    # Priority 75 - Zhihu Q&A
     BaiduExtractor,    # Priority 70 - Baidu search results
     QuarkExtractor,    # Priority 65 - Quark search/cloud
     SohuExtractor,     # Priority 60 - Sohu search/article
@@ -82,6 +90,10 @@ def _get_extractor_by_type(site_type: str) -> Optional[Type[BaseExtractor]]:
         "cnblogs": CnblogsExtractor,
         "juejin": JuejinExtractor,
         "segmentfault": SegmentfaultExtractor,
+        "github": GithubExtractor,
+        "gitee": GiteeExtractor,
+        "zhihu": ZhihuExtractor,
+        "stackoverflow": StackoverflowExtractor,
         "general": GeneralExtractor,
     }
     
@@ -154,6 +166,10 @@ __all__ = [
     "CnblogsExtractor",
     "JuejinExtractor",
     "SegmentfaultExtractor",
+    "GithubExtractor",
+    "GiteeExtractor",
+    "ZhihuExtractor",
+    "StackoverflowExtractor",
     "get_extractor",
     "get_extractor_for_playwright",
     "EXTRACTOR_REGISTRY",
