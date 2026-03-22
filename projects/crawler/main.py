@@ -13,6 +13,10 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from src.crawler import crawl
 from src.config import OUTPUT_DIR, DOWNLOADS_DIR, EXPORT_FORMATS
+from src.logger import setup_logger, set_verbose
+
+# Setup logger
+logger = setup_logger('crawler')
 
 
 def main():
@@ -75,8 +79,18 @@ def main():
         default=1,
         help="Number of concurrent crawls (default: 1)"
     )
+    parser.add_argument(
+        "--verbose", "-v",
+        action="store_true",
+        help="Enable verbose logging"
+    )
     
     args = parser.parse_args()
+    
+    # Setup verbose mode if requested
+    if args.verbose:
+        set_verbose(True)
+        logger.info("Verbose mode enabled")
     
     if args.list_formats:
         print("Supported export formats:")

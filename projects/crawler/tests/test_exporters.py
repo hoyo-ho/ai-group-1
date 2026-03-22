@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from src.exporters import JSONExporter, MarkdownExporter, PDFFxporter, CSVExporter, ImageExporter
+from src.exporters import JSONExporter, MarkdownExporter, PDFExporter, CSVExporter, ImageExporter
 
 
 class TestJSONExporter:
@@ -68,11 +68,11 @@ class TestCSVExporter:
         assert result.endswith(".csv")
 
 
-class TestPDFFxporter:
+class TestPDFExporter:
     """Test PDF exporter"""
 
     def test_export_basic(self, sample_data, tmp_output_dir):
-        exporter = PDFFxporter()
+        exporter = PDFExporter()
         result = exporter.export(sample_data, "test", tmp_output_dir)
         
         # Should generate PDF (or fallback to MD if weasyprint fails)
@@ -83,7 +83,7 @@ class TestPDFFxporter:
         """Test PDF output has correct extension when weasyprint works"""
         try:
             import weasyprint
-            exporter = PDFFxporter()
+            exporter = PDFExporter()
             result = exporter.export(sample_data, "test", tmp_output_dir)
             # If weasyprint works, should return .pdf
             assert result.endswith(".pdf")
