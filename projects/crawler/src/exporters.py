@@ -122,7 +122,7 @@ class MarkdownExporter(BaseExporter):
         return "".join(md)
 
 
-class PDFFxporter(BaseExporter):
+class PDFExporter(BaseExporter):
     """Export to PDF format using weasyprint"""
     
     def export(self, data: Dict, filename: str, output_dir: Path = None) -> str:
@@ -261,7 +261,7 @@ def get_exporter(format_type: str) -> BaseExporter:
         "csv": CSVExporter(),
         "markdown": MarkdownExporter(),
         "md": MarkdownExporter(),
-        "pdf": PDFFxporter(),
+        "pdf": PDFExporter(),
         "png": ImageExporter(),
         "jpg": ImageExporter(),
         "jpeg": ImageExporter(),

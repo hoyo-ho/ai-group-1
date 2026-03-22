@@ -1,0 +1,28 @@
+# Proxy Configuration
+# 代理配置
+
+# 全局代理开关
+enabled: true
+
+# HTTP/HTTPS 代理
+http: "http://127.0.0.1:7897"
+
+# SOCKS5 代理
+socks5: "socks5://127.0.0.1:7897"
+
+# 不使用代理的域名（反爬站点）
+no_proxy_domains:
+  - "csdn.net"
+  - "juejin.cn"
+  - "segmentfault.com"
+
+# 代理认证（如果需要）
+auth:
+  username: ""
+  password: ""
+
+# 超时设置（秒）
+timeout: 60
+
+# 重试次数
+max_retries: 3
