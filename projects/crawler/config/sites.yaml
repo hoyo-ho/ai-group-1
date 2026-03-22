@@ -1,0 +1,118 @@
+# Sites Configuration
+# 配置各站点的特定参数
+
+sites:
+  zhihu:
+    name: "知乎"
+    domains:
+      - "zhihu.com"
+      - "zhihu.com.cn"
+    requires_playwright: false
+    priority: 75
+
+  baidu:
+    name: "百度"
+    domains:
+      - "baidu.com"
+      - "baike.baidu.com"
+    requires_playwright: false
+    priority: 70
+
+  csdn:
+    name: "CSDN"
+    domains:
+      - "csdn.net"
+    requires_playwright: true
+    priority: 70
+    no_proxy: true
+
+  juejin:
+    name: "稀土掘金"
+    domains:
+      - "juejin.cn"
+    requires_playwright: true
+    priority: 70
+    no_proxy: true
+
+  segmentfault:
+    name: "SegmentFault"
+    domains:
+      - "segmentfault.com"
+    requires_playwright: true
+    priority: 70
+    no_proxy: true
+
+  bilibili:
+    name: "哔哩哔哩"
+    domains:
+      - "bilibili.com"
+    requires_playwright: true
+    priority: 80
+
+  douyin:
+    name: "抖音"
+    domains:
+      - "douyin.com"
+    requires_playwright: true
+    priority: 85
+
+  github:
+    name: "GitHub"
+    domains:
+      - "github.com"
+      - "githubusercontent.com"
+    requires_playwright: false
+    priority: 80
+
+  gitee:
+    name: "Gitee"
+    domains:
+      - "gitee.com"
+    requires_playwright: false
+    priority: 80
+
+  stackoverflow:
+    name: "Stack Overflow"
+    domains:
+      - "stackoverflow.com"
+      - "stackexchange.com"
+    requires_playwright: false
+    priority: 75
+
+  quora:
+    name: "Quora"
+    domains:
+      - "quora.com"
+    requires_playwright: false
+    priority: 70
+
+  cnblogs:
+    name: "博客园"
+    domains:
+      - "cnblogs.com"
+    requires_playwright: false
+    priority: 70
+
+  wiki:
+    name: "维基百科"
+    domains:
+      - "wikipedia.org"
+      - "wikidata.org"
+      - "baike.baidu.com"
+    requires_playwright: false
+    priority: 90
+
+  sohu:
+    name: "搜狐"
+    domains:
+      - "sohu.com"
+    requires_playwright: false
+    priority: 60
+
+  quark:
+    name: "夸克网盘"
+    domains:
+      - "quark.cn"
+      - "pan.quark.cn"
+    requires_playwright: false
+    priority: 65
