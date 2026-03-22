@@ -40,7 +40,7 @@ class Crawler:
         
         self.playwright_browser = None
         self.playwright_sync = None
-        self.stealth_instance = None
+        self.stealth_apply_sync = None
         
         # Apply cookies for specific sites
         self._apply_cookies()
@@ -88,10 +88,16 @@ class Crawler:
             # Apply stealth mode if requested
             if stealth:
                 try:
-                    from playwright_stealth.stealth import Stealth
-                    self.stealth_instance = Stealth()
+                    from playwright_stealth import stealth_sync
+                    self.stealth_apply_sync = stealth_sync
                 except ImportError:
-                    print("Warning: playwright_stealth not installed, continuing without stealth mode")
+                    try:
+                        from playwright_stealth.stealth import Stealth
+                        self.stealth_apply_sync = Stealth().apply_stealth_sync
+                    except ImportError:
+                        print("Warning: playwright_stealth not installed, continuing without stealth mode")
+                    except Exception as e:
+                        print(f"Warning: Failed to initialize stealth mode: {e}")
                 except Exception as e:
                     print(f"Warning: Failed to initialize stealth mode: {e}")
                     
@@ -194,8 +200,11 @@ class Crawler:
             page = context.new_page()
             
             # Apply stealth if available
-            if self.stealth_instance:
-                self.stealth_instance.apply_stealth_sync(page)
+            if self.stealth_apply_sync:
+                try:
+                    self.stealth_apply_sync(page)
+                except Exception as e:
+                    print(f"Warning: Failed to apply stealth mode: {e}")
             
             # Add random delay before navigation to mimic human behavior
             time.sleep(random.uniform(0.5, 2.0))

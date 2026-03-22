@@ -1,0 +1,6 @@
+# Compatibility constraints for shared Python environments.
+# These keep requests and its character-detection stack in a supported range.
+requests<3
+urllib3>=1.21.1,<3
+charset-normalizer>=2,<4
+chardet>=3.0.2,<6

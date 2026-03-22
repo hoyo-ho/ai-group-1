@@ -123,16 +123,90 @@ class MarkdownExporter(BaseExporter):
 
 
 class PDFFxporter(BaseExporter):
-    """Export to PDF format (via markdown conversion)"""
+    """Export to PDF format using weasyprint"""
     
     def export(self, data: Dict, filename: str, output_dir: Path = None) -> str:
         # First export as markdown
         md_exporter = MarkdownExporter()
         md_path = md_exporter.export(data, filename, output_dir)
         
-        # Note: Actual PDF conversion would require weasyprint or similar
-        # For now, return the markdown file path
-        return md_path
+        # Convert markdown to PDF using weasyprint
+        try:
+            import weasyprint
+            pdf_path = Path(md_path).with_suffix(".pdf")
+            
+            # Read markdown content
+            with open(md_path, "r", encoding="utf-8") as f:
+                md_content = f.read()
+            
+            # Convert to HTML then PDF
+            # Note: weasyprint expects HTML, simple markdown conversion
+            html_content = self._markdown_to_html(md_content)
+            html = weasyprint.HTML(string=html_content)
+            html.write_pdf(str(pdf_path))
+            
+            return str(pdf_path)
+        except ImportError:
+            # Fallback to markdown if weasyprint not installed
+            print("Warning: weasyprint not installed, returning markdown file")
+            return md_path
+        except Exception as e:
+            print(f"PDF conversion failed: {e}")
+            return md_path
+    
+    def _markdown_to_html(self, md_content: str) -> str:
+        """Simple markdown to HTML conversion for weasyprint"""
+        import re
+        
+        html = []
+        lines = md_content.split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            if not line:
+                html.append('<br>')
+                continue
+            
+            # Headers
+            if line.startswith('###### '):
+                html.append(f'<h6>{line[7:]}</h6>')
+            elif line.startswith('##### '):
+                html.append(f'<h5>{line[6:]}</h5>')
+            elif line.startswith('#### '):
+                html.append(f'<h4>{line[5:]}</h4>')
+            elif line.startswith('### '):
+                html.append(f'<h3>{line[4:]}</h3>')
+            elif line.startswith('## '):
+                html.append(f'<h2>{line[3:]}</h2>')
+            elif line.startswith('# '):
+                html.append(f'<h1>{line[2:]}</h1>')
+            # List items
+            elif line.startswith('- '):
+                html.append(f'<li>{line[2:]}</li>')
+            # Key-value pairs (key: value)
+            elif ': ' in line and not line.startswith(' '):
+                key, value = line.split(': ', 1)
+                html.append(f'<p><strong>{key}:</strong> {value}</p>')
+            else:
+                html.append(f'<p>{line}</p>')
+        
+        # Wrap in basic HTML template
+        return f'''<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 40px; }}
+        h1 {{ color: #333; }}
+        h2 {{ color: #555; }}
+        h3 {{ color: #777; }}
+        li {{ margin-left: 20px; }}
+    </style>
+</head>
+<body>
+{"".join(html)}
+</body>
+</html>'''
 
 
 class ImageExporter(BaseExporter):

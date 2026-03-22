@@ -36,8 +36,13 @@ conda activate crawler
 ### 使用 pip
 
 ```bash
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 ```
+
+### 依赖兼容说明
+
+- `requirements.txt` 会自动加载 `constraints.txt`，约束 `requests / urllib3 / charset-normalizer / chardet` 的兼容区间。
+- 如果你把 crawler 和其他抓取工具装在同一个 Python 解释器里，优先用独立虚拟环境；否则某些包升级后可能重新触发 `RequestsDependencyWarning`。
 
 ## 使用方法
 
